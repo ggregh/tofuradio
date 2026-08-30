@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#212529">
+<title>Tofu Radio</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+:root{
+    --bg:#24353F;
+    --card:#212529;
+    --dark:#212529;
+    --muted:#747b83;
+    --green:#b0ff32;
+    --yellow:#b0ff32;
+    --border:#212529;
+}
+*{
+    box-sizing:border-box;
+}
+html,body{
+    margin:0;
+    padding:0;
+    background:var(--bg);
+    color:#ffffff;
+}
+body{
+    padding-bottom:82px;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.app{
+    width:100%;
+    max-width:560px;
+    margin:auto;
+    padding:0 12px 25px;
+}
+.app-header{
+    margin:0 -12px 18px;
+    padding:calc(13px + env(safe-area-inset-top)) 15px 13px;
+    background:var(--dark);
+    color:white;
+}
+.header-inner{
+    display:flex;
+    align-items:center;
+    gap:11px;
+}
+.header-icon{
+    width:56px;
+    height:56px;
+    flex:0 0 56px;
+    border-radius:12px;
+    background:#EC314E;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+.header-icon img{
+    width:46px;
+    height:46px;
+    object-fit:contain;
+    display:block;
+}
+.header-title{
+    font-weight:700;
+    font-size:1.05rem;
+    line-height:1.1;
+}
+.header-version{
+    margin-top:3px;
+    opacity:.6;
+    font-size:.68rem;
+}
+.section-label{
+    margin:4px 2px 9px;
+    color:var(--muted);
+    font-size:.72rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+}
+.radio-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:9px;
+}
+.radio-card{
+    position:relative;
+    min-height:148px;
+    padding:11px;
+    background:var(--card);
+    border:3px solid var(--border);
+    border-radius:12px;
+    cursor:pointer;
+    transition:transform .08s, border-color .12s, background .12s;
+}
+.radio-card:active{
+    transform:scale(.975);
+}
+.radio-card.active{
+    border-color:var(--green);
+    background:#EC314E;
+}
+.radio-logo{
+    width:52px;
+    height:52px;
+    object-fit:contain;
+    border-radius:9px;
+    border:1px solid #e9ecef;
+    background:#f8f9fa;
+}
+.radio-name{
+    margin-top:8px;
+    padding-right:25px;
+    font-size:.84rem;
+    font-weight:700;
+    line-height:1.18;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    overflow:hidden;
+}
+.radio-info{
+    margin-top:7px;
+    color:#adb5bd;
+    font-size:.62rem;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+.codec{
+    display:inline-block;
+    padding:2px 5px;
+    border-radius:4px;
+    background:#e9ecef;
+    color:#495057;
+    font-size:.57rem;
+    font-weight:700;
+}
+.card-star{
+    position:absolute;
+    top:4px;
+    right:4px;
+    width:36px;
+    height:36px;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:var(--yellow);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:19px;
+    z-index:5;
+}
+.search-main{
+    width:100%;
+    margin-top:13px;
+    padding:11px;
+    border-radius:10px;
+    font-weight:600;
+}
+.disclaimer{
+    margin-top:24px;
+    padding-top:13px;
+    border-top:1px solid var(--border);
+    color:#858b91;
+    font-size:.66rem;
+    line-height:1.45;
+}
+.player{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:3000;
+    padding:7px 9px calc(7px + env(safe-area-inset-bottom));
+    background:rgba(33,37,41,.98);
+    color:white;
+    box-shadow:0 -3px 15px rgba(0,0,0,.18);
+}
+.player-inner{
+    width:100%;
+    max-width:560px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+.player-logo{
+    width:43px;
+    height:43px;
+    flex:0 0 43px;
+    object-fit:contain;
+    border-radius:8px;
+    background:#495057;
+}
+.player-info{
+    min-width:0;
+    flex:1;
+}
+.player-name{
+    font-size:.8rem;
+    font-weight:700;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+.player-status{
+    margin-top:2px;
+    color:#adb5bd;
+    font-size:.61rem;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+.player-button{
+    width:40px;
+    height:40px;
+    flex:0 0 40px;
+    border:0;
+    padding:0;
+    background:transparent;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+.player-favorite{
+    color:var(--yellow);
+}
+.player-play{
+    width:43px;
+    height:43px;
+    flex-basis:43px;
+    border-radius:50%;
+    background:#EC314E;
+    color:#212529;
+}
+.search-result{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:9px;
+    border:0;
+    border-bottom:1px solid #3a4a54;
+    background:#212529;
+    color:white;
+    text-align:left;
+}
+.search-result:active{
+    background:#2d3b44;
+}
+.search-logo{
+    width:44px;
+    height:44px;
+    flex:0 0 44px;
+    object-fit:contain;
+    border-radius:7px;
+    background:#f8f9fa;
+}
+.search-info{
+    min-width:0;
+    flex:1;
+}
+.search-name{
+    color:white;
+    font-size:.82rem;
+    font-weight:700;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+.search-meta{
+    margin-top:2px;
+    color:#adb5bd;
+    font-size:.62rem;
+}
+.search-star{
+    width:38px;
+    height:38px;
+    flex:0 0 38px;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:var(--yellow);
+    font-size:19px;
+}
+.modal-content{
+    background:#24353F;
+    color:white;
+    border:0;
+    border-radius:14px;
+    overflow:hidden;
+}
+.modal-header{
+    background:#212529;
+    color:white;
+    border-bottom:1px solid #3a4a54;
+}
+.modal-body{
+    background:#24353F;
+}
+.modal-header .btn-close{
+    filter:invert(1);
+}
+.modal-title{
+    font-weight:700;
+}
+#searchInput{
+    background:#212529;
+    color:white;
+    border-color:#495057;
+}
+#searchInput::placeholder{
+    color:#8b949e;
+}
+#searchInput:focus{
+    background:#212529;
+    color:white;
+    border-color:#EC314E;
+    box-shadow:0 0 0 .2rem rgba(236,49,78,.18);
+}
+#searchButton{
+    background:#EC314E;
+    border-color:#EC314E;
+    color:#212529;
+}
+.search-loading{
+    text-align:center;
+    padding:20px;
+    color:#adb5bd;
+}
+.search-alert{
+    background:#212529;
+    color:#adb5bd;
+    border:1px solid #3a4a54;
+}
+@media(min-width:768px){
+    body{
+        padding-top:20px;
+    }
+    .app-header{
+        margin-left:0;
+        margin-right:0;
+        border-radius:14px;
+    }
+}
+button{
+    -webkit-tap-highlight-color:transparent;
+}
+button:focus-visible{
+    outline:2px solid var(--green);
+    outline-offset:2px;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+    <header class="app-header">
+        <div class="header-inner">
+            <div class="header-icon">
+                <img src="logo.png" alt="Tofu Radio" onerror="this.style.display='none';">
+            </div>
+            <div>
+                <div class="header-title">Tofu Radio</div>
+                <div class="header-version">Versione 1.0.2</div>
+            </div>
+        </div>
+    </header>
+
+    <div id="favoritesSection" style="display:none;">
+        <div class="section-label">
+            <i class="bi bi-music-player-fill me-1"></i> RADIO PREFERITE
+        </div>
+        <div id="favoritesGrid" class="radio-grid"></div>
+    </div>
+
+    <button id="searchOpen" type="button" class="btn btn-dark search-main" data-bs-toggle="modal" data-bs-target="#searchModal">
+        <i class="bi bi-search me-2"></i> Cerca stazione
+    </button>
+
+    <div class="disclaimer">
+        <strong>Disclaimer</strong><br>
+        Tofu Radio utilizza i dati pubblici di Radio Browser per individuare stazioni radio e relativi flussi audio.
+        I nomi, i loghi e i contenuti delle stazioni appartengono ai rispettivi proprietari.
+        L'applicazione non ospita né redistribuisce i flussi audio.
+        La disponibilità degli stream dipende dalle singole emittenti.
+    </div>
+</div>
+
+<div class="player">
+    <div class="player-inner">
+        <img id="playerLogo" class="player-logo" alt="">
+        <div class="player-info">
+            <div id="playerName" class="player-name">Nessuna radio</div>
+            <div id="playerStatus" class="player-status">Seleziona una stazione</div>
+        </div>
+        <button id="playerFavorite" type="button" class="player-button player-favorite" aria-label="Salva preferito">
+            <i class="bi bi-star"></i>
+        </button>
+        <button id="playerPlay" type="button" class="player-button player-play" aria-label="Riproduci">
+            <i class="bi bi-play-fill"></i>
+        </button>
+    </div>
+    <audio id="audio" preload="none" playsinline></audio>
+    <audio id="silentAudio" loop preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="></audio>
+</div>
+
+<div class="modal fade" id="searchModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-search me-2"></i> Cerca radio
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <input id="searchInput" type="search" class="form-control" placeholder="Nome della radio..." autocomplete="off">
+                    <button id="searchButton" type="button" class="btn btn-dark">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+                <div id="searchStatus" class="small text-muted mb-2"></div>
+                <div id="searchResults"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+"use strict";
+
+const API_SERVERS = [
+    "https://de1.api.radio-browser.info",
+    "https://at1.api.radio-browser.info",
+    "https://nl1.api.radio-browser.info"
+];
+
+const STORAGE_KEY = "italia_radio_player_favorites_v2";
+const DEFAULT_LOGO = "default-radio.png";
+
+const WATCHDOG_INTERVAL = 5000;
+const WATCHDOG_STALL_LIMIT = 15000;
+const MAX_RECONNECT_ATTEMPTS = 5;
+const RECONNECT_DELAYS = [3000, 5000, 8000, 12000, 15000];
+
+let favorites = [];
+let currentStation = null;
+let currentStreamUrl = null;
+let isPlaying = false;
+let streamGeneration = 0;
+let watchdogTimer = null;
+let lastStreamActivity = Date.now();
+
+let streamTroubled = false;
+let reconnecting = false;
+let reconnectAttempts = 0;
+let userStopped = false;
+let reconnectTimer = null;
+let wakeLock = null;
+
+const audio = document.getElementById("audio");
+const silentAudio = document.getElementById("silentAudio");
+const favoritesSection = document.getElementById("favoritesSection");
+const favoritesGrid = document.getElementById("favoritesGrid");
+const playerLogo = document.getElementById("playerLogo");
+const playerName = document.getElementById("playerName");
+const playerStatus = document.getElementById("playerStatus");
+const playerFavorite = document.getElementById("playerFavorite");
+const playerPlay = document.getElementById("playerPlay");
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
+const searchStatus = document.getElementById("searchStatus");
+const searchResults = document.getElementById("searchResults");
+
+async function requestWakeLock(){
+    try{
+        if('wakeLock' in navigator){
+            wakeLock = await navigator.wakeLock.request('screen');
+        }
+    }catch(err){}
+}
+
+function releaseWakeLock(){
+    if(wakeLock !== null){
+        wakeLock.release();
+        wakeLock = null;
+    }
+}
+
+function startWatchdog(){
+    stopWatchdog();
+    lastStreamActivity = Date.now();
+    watchdogTimer = setInterval(checkStreamHealth, WATCHDOG_INTERVAL);
+}
+
+function stopWatchdog(){
+    if(watchdogTimer){
+        clearInterval(watchdogTimer);
+        watchdogTimer = null;
+    }
+}
+
+function checkStreamHealth(){
+    if(document.visibilityState === "hidden"){
+        return;
+    }
+
+    if(!currentStation || userStopped || reconnecting || !isPlaying || audio.paused){
+        return;
+    }
+
+    if(audio.ended){
+        triggerReconnect("Stream terminato");
+        return;
+    }
+
+    const age = Date.now() - lastStreamActivity;
+
+    if(age < WATCHDOG_STALL_LIMIT){
+        return;
+    }
+
+    if(streamTroubled || audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA){
+        triggerReconnect("Connessione persa");
+    }
+}
+
+function markStreamActivity(){
+    lastStreamActivity = Date.now();
+    streamTroubled = false;
+}
+
+function markStreamTroubled(reason){
+    if(userStopped || !isPlaying){
+        return;
+    }
+    streamTroubled = true;
+    setPlayerStatus(reason);
+}
+
+function triggerReconnect(reason){
+    if(userStopped || !currentStation || reconnecting){
+        return;
+    }
+
+    if(reconnectAttempts >= MAX_RECONNECT_ATTEMPTS){
+        handleReconnectFailure();
+        return;
+    }
+
+    reconnecting = true;
+    isPlaying = false;
+    updatePlayer();
+    setPlayerStatus("Riconnessione...");
+
+    const delay = RECONNECT_DELAYS[reconnectAttempts] || 15000;
+    reconnectAttempts++;
+
+    reconnectTimer = setTimeout(async () => {
+        reconnectTimer = null;
+        if(userStopped){
+            reconnecting = false;
+            return;
+        }
+        await performReconnect();
+    }, delay);
+}
+
+async function performReconnect(){
+    if(userStopped || !currentStation){
+        reconnecting = false;
+        return;
+    }
+
+    const generation = ++streamGeneration;
+    const station = normalizeStation(currentStation);
+    const urls = getStreamUrls(station);
+
+    if(!urls.length){
+        reconnecting = false;
+        handleReconnectFailure();
+        return;
+    }
+
+    const orderedUrls = [];
+    if(currentStreamUrl && urls.includes(currentStreamUrl)){
+        orderedUrls.push(currentStreamUrl);
+    }
+
+    urls.forEach(url => {
+        if(!orderedUrls.includes(url)){
+            orderedUrls.push(url);
+        }
+    });
+
+    for(const url of orderedUrls){
+        if(userStopped){
+            reconnecting = false;
+            return;
+        }
+
+        setPlayerStatus("Riconnessione...");
+
+        const success = await loadAndPlay(url, generation);
+
+        if(success){
+            currentStreamUrl = url;
+            isPlaying = true;
+            reconnecting = false;
+            reconnectAttempts = 0;
+            streamTroubled = false;
+            userStopped = false;
+
+            markStreamActivity();
+            updatePlayer();
+            setPlayerStatus("In riproduzione");
+            setupMediaSession(station);
+            renderFavorites();
+            return;
+        }
+    }
+
+    reconnecting = false;
+    isPlaying = false;
+    updatePlayer();
+
+    if(reconnectAttempts < MAX_RECONNECT_ATTEMPTS){
+        setPlayerStatus("Nuovo tentativo...");
+        triggerReconnect("Stream non disponibile");
+    }else{
+        handleReconnectFailure();
+    }
+}
+
+function handleReconnectFailure(){
+    reconnecting = false;
+    isPlaying = false;
+    stopReconnectTimer();
+    setPlayerStatus("Connessione persa");
+    updatePlayer();
+}
+
+function stopReconnectTimer(){
+    if(reconnectTimer){
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+    }
+}
+
+function resetReconnectState(){
+    stopReconnectTimer();
+    reconnectAttempts = 0;
+    reconnecting = false;
+    streamTroubled = false;
+    lastStreamActivity = Date.now();
+}
+
+function normalizeStation(s){
+    return {
+        stationuuid: String(s.stationuuid || ""),
+        name: String(s.name || "Radio"),
+        url: String(s.url || ""),
+        url_resolved: String(s.url_resolved || ""),
+        favicon: String(s.favicon || ""),
+        homepage: String(s.homepage || ""),
+        codec: String(s.codec || "AUDIO"),
+        bitrate: Number(s.bitrate || 0),
+        countrycode: String(s.countrycode || ""),
+        lastcheckok: Number(s.lastcheckok || 0)
+    };
+}
+
+function getStreamUrls(station){
+    const result = [];
+
+    if(station.url_resolved){
+        result.push(station.url_resolved);
+    }
+    if(station.url && !result.includes(station.url)){
+        result.push(station.url);
+    }
+
+    return result.filter(url => {
+        try{
+            const parsed = new URL(url);
+            return (parsed.protocol === "http:" || parsed.protocol === "https:");
+        }catch{
+            return false;
+        }
+    });
+}
+
+function loadFavorites(){
+    try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return [];
+        const parsed = JSON.parse(raw);
+        if(!Array.isArray(parsed)) return [];
+
+        return parsed
+            .map(normalizeStation)
+            .filter(s => s.stationuuid && getStreamUrls(s).length);
+    }catch(error){
+        console.error("Errore localStorage:", error);
+        return [];
+    }
+}
+
+function saveFavorites(){
+    try{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+        return true;
+    }catch(error){
+        console.error("Impossibile salvare:", error);
+        return false;
+    }
+}
+
+function isFavorite(uuid){
+    return favorites.some(station => station.stationuuid === uuid);
+}
+
+function toggleFavorite(station){
+    station = normalizeStation(station);
+    const index = favorites.findIndex(s => s.stationuuid === station.stationuuid);
+
+    if(index >= 0){
+        favorites.splice(index, 1);
+    }else{
+        favorites.unshift(station);
+    }
+
+    saveFavorites();
+    renderFavorites();
+    updatePlayerFavorite();
+}
+
+async function radioBrowserFetch(path){
+    let lastError = null;
+
+    for(const server of API_SERVERS){
+        try{
+            const response = await fetch(server + path, {
+                method:"GET",
+                headers:{"Accept":"application/json"},
+                cache:"no-store"
+            });
+
+            if(!response.ok){
+                throw new Error("HTTP " + response.status);
+            }
+
+            return await response.json();
+        }catch(error){
+            lastError = error;
+        }
+    }
+
+    throw(lastError || new Error("Radio Browser non raggiungibile"));
+}
+
+async function searchStations(query){
+    const encoded = encodeURIComponent(query);
+    const path = "/json/stations/search?name=" + encoded +
+                 "&countrycode=IT&lastcheckok=1&hidebroken=true&limit=30&order=clickcount&reverse=true";
+
+    const data = await radioBrowserFetch(path);
+
+    return data
+        .map(normalizeStation)
+        .filter(station => station.stationuuid && getStreamUrls(station).length > 0);
+}
+
+async function doSearch(){
+    const query = searchInput.value.trim();
+
+    if(query.length < 2){
+        searchStatus.textContent = "Inserisci almeno 2 caratteri.";
+        searchResults.innerHTML = "";
+        return;
+    }
+
+    searchButton.disabled = true;
+    searchStatus.textContent = "Ricerca in corso...";
+    searchResults.innerHTML = `
+        <div class="search-loading">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            Ricerca...
+        </div>`;
+
+    try{
+        const stations = await searchStations(query);
+
+        if(!stations.length){
+            searchStatus.textContent = "Nessuna stazione trovata.";
+            searchResults.innerHTML = `
+                <div class="alert search-alert">
+                    Nessuna radio italiana disponibile per questa ricerca.
+                </div>`;
+            return;
+        }
+
+        searchStatus.textContent = stations.length + " risultati";
+        searchResults.innerHTML = "";
+
+        stations.forEach(station => {
+            searchResults.appendChild(createSearchResult(station));
+        });
+    }catch(error){
+        console.error(error);
+        searchStatus.textContent = "";
+        searchResults.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="bi bi-wifi-off me-1"></i>
+                Errore nel collegamento a Radio Browser.
+            </div>`;
+    }finally{
+        searchButton.disabled = false;
+    }
+}
+
+function createSearchResult(station){
+    const row = document.createElement("div");
+    row.className = "search-result";
+
+    const logo = document.createElement("img");
+    logo.className = "search-logo";
+    logo.alt = "";
+    applyLogo(logo, station);
+
+    const info = document.createElement("div");
+    info.className = "search-info";
+
+    const name = document.createElement("div");
+    name.className = "search-name";
+    name.textContent = station.name;
+
+    const meta = document.createElement("div");
+    meta.className = "search-meta";
+    meta.textContent = formatCodec(station) + " · " + formatBitrate(station);
+
+    info.appendChild(name);
+    info.appendChild(meta);
+
+    const star = document.createElement("button");
+    star.type = "button";
+    star.className = "search-star";
+
+    function refreshStar(){
+        star.innerHTML = isFavorite(station.stationuuid)
+            ? '<i class="bi bi-star-fill"></i>'
+            : '<i class="bi bi-star"></i>';
+    }
+
+    refreshStar();
+
+    star.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleFavorite(station);
+        refreshStar();
+    });
+
+    row.addEventListener("click", async () => {
+        await playStation(station);
+        const modalElement = document.getElementById("searchModal");
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if(modal){
+            modal.hide();
+        }
+    });
+
+    row.appendChild(logo);
+    row.appendChild(info);
+    row.appendChild(star);
+
+    return row;
+}
+
+async function playStation(station){
+    station = normalizeStation(station);
+    const urls = getStreamUrls(station);
+
+    if(!urls.length){
+        showPlayerError("Nessun flusso disponibile");
+        return;
+    }
+
+    ++streamGeneration;
+    stopReconnectTimer();
+
+    reconnecting = false;
+    reconnectAttempts = 0;
+    streamTroubled = false;
+    userStopped = false;
+
+    currentStation = station;
+    currentStreamUrl = null;
+    isPlaying = false;
+
+    updatePlayer();
+    setPlayerStatus("Connessione...");
+
+    const generation = streamGeneration;
+
+    for(let i = 0; i < urls.length; i++){
+        if(generation !== streamGeneration){
+            return;
+        }
+
+        const url = urls[i];
+        setPlayerStatus(i === 0 ? "Connessione..." : "Provo il secondo flusso...");
+
+        const success = await loadAndPlay(url, generation);
+
+        if(success){
+            currentStreamUrl = url;
+            isPlaying = true;
+
+            resetReconnectState();
+            userStopped = false;
+
+            markStreamActivity();
+            updatePlayer();
+            setPlayerStatus("In riproduzione");
+            setupMediaSession(station);
+            sendClick(station.stationuuid);
+            renderFavorites();
+            startWatchdog();
+            return;
+        }
+    }
+
+    isPlaying = false;
+    updatePlayer();
+    showPlayerError("Lo stream non è riproducibile dal browser");
+}
+
+function loadAndPlay(url, generation){
+    return new Promise(resolve => {
+        let finished = false;
+        let timer = null;
+
+        function finish(result){
+            if(finished) return;
+            finished = true;
+
+            if(timer) clearTimeout(timer);
+
+            audio.removeEventListener("playing", onPlaying);
+            audio.removeEventListener("error", onError);
+            audio.removeEventListener("abort", onAbort);
+
+            resolve(result);
+        }
+
+        function onPlaying(){
+            if(generation !== streamGeneration){
+                finish(false);
+                return;
+            }
+            finish(true);
+        }
+
+        function onError(){ finish(false); }
+        function onAbort(){ finish(false); }
+
+        audio.pause();
+        audio.removeAttribute("src");
+        audio.load();
+
+        audio.addEventListener("playing", onPlaying);
+        audio.addEventListener("error", onError);
+        audio.addEventListener("abort", onAbort);
+
+        timer = setTimeout(() => finish(false), 12000);
+
+        audio.src = url;
+        audio.load();
+
+        const promise = audio.play();
+        if(promise && typeof promise.catch === "function"){
+            promise.catch(error => {
+                console.warn("play() rifiutato:", error);
+                finish(false);
+            });
+        }
+    });
+}
+
+function renderFavorites(){
+    favoritesGrid.innerHTML = "";
+
+    if(favorites.length === 0){
+        favoritesSection.style.display = "none";
+        return;
+    }
+
+    favoritesSection.style.display = "block";
+
+    favorites.forEach(station => {
+        favoritesGrid.appendChild(createFavoriteCard(station));
+    });
+}
+
+function createFavoriteCard(station){
+    const card = document.createElement("div");
+    card.className = "radio-card";
+
+    if(currentStation && currentStation.stationuuid === station.stationuuid && isPlaying){
+        card.classList.add("active");
+    }
+
+    const logo = document.createElement("img");
+    logo.className = "radio-logo";
+    logo.alt = "";
+    applyLogo(logo, station);
+
+    const name = document.createElement("div");
+    name.className = "radio-name";
+    name.textContent = station.name;
+
+    const info = document.createElement("div");
+    info.className = "radio-info";
+    info.innerHTML = `
+        <span class="codec">${escapeHtml(formatCodec(station))}</span>
+        &nbsp;
+        ${escapeHtml(formatBitrate(station))}
+    `;
+
+    const star = document.createElement("button");
+    star.type = "button";
+    star.className = "card-star";
+    star.innerHTML = '<i class="bi bi-star-fill"></i>';
+
+    star.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleFavorite(station);
+    });
+
+    card.addEventListener("click", async () => {
+        if(currentStation && currentStation.stationuuid === station.stationuuid){
+            if(isPlaying){
+                stopAudio();
+            }else{
+                await playStation(station);
+            }
+        }else{
+            await playStation(station);
+        }
+    });
+
+    card.appendChild(logo);
+    card.appendChild(name);
+    card.appendChild(info);
+    card.appendChild(star);
+
+    return card;
+}
+
+function stopAudio(){
+    ++streamGeneration;
+    stopReconnectTimer();
+
+    reconnecting = false;
+    reconnectAttempts = 0;
+    streamTroubled = false;
+    userStopped = true;
+
+    audio.pause();
+    if(silentAudio){
+        silentAudio.pause();
+    }
+    releaseWakeLock();
+
+    isPlaying = false;
+
+    setPlayerStatus("Fermata");
+    updatePlayer();
+    renderFavorites();
+
+    if("mediaSession" in navigator){
+        navigator.mediaSession.playbackState = "paused";
+    }
+}
+
+function updatePlayer(){
+    if(!currentStation){
+        playerName.textContent = "Nessuna radio";
+        setPlayerStatus("Seleziona una stazione");
+        playerLogo.src = DEFAULT_LOGO;
+        playerPlay.innerHTML = '<i class="bi bi-play-fill"></i>';
+        updatePlayerFavorite();
+
+        if("mediaSession" in navigator){
+            navigator.mediaSession.playbackState = "none";
+        }
+        return;
+    }
+
+    playerName.textContent = currentStation.name;
+    applyLogo(playerLogo, currentStation);
+
+    if(isPlaying){
+        playerPlay.innerHTML = '<i class="bi bi-stop-fill"></i>';
+        if("mediaSession" in navigator){
+            navigator.mediaSession.playbackState = "playing";
+        }
+    }else{
+        playerPlay.innerHTML = '<i class="bi bi-play-fill"></i>';
+        if("mediaSession" in navigator){
+            navigator.mediaSession.playbackState = "paused";
+        }
+    }
+
+    updatePlayerFavorite();
+    renderFavorites();
+}
+
+function updatePlayerFavorite(){
+    if(!currentStation){
+        playerFavorite.innerHTML = '<i class="bi bi-star"></i>';
+        return;
+    }
+
+    playerFavorite.innerHTML = isFavorite(currentStation.stationuuid)
+        ? '<i class="bi bi-star-fill"></i>'
+        : '<i class="bi bi-star"></i>';
+}
+
+playerPlay.addEventListener("click", async () => {
+    if(!currentStation) return;
+
+    if(isPlaying){
+        stopAudio();
+    }else{
+        userStopped = false;
+        await playStation(currentStation);
+    }
+});
+
+playerFavorite.addEventListener("click", event => {
+    event.preventDefault();
+    if(!currentStation) return;
+    toggleFavorite(currentStation);
+});
+
+audio.addEventListener("playing", () => {
+    isPlaying = true;
+    userStopped = false;
+    reconnecting = false;
+    streamTroubled = false;
+    reconnectAttempts = 0;
+
+    if(silentAudio){
+        silentAudio.play().catch(() => {});
+    }
+    requestWakeLock();
+
+    markStreamActivity();
+    setPlayerStatus("In riproduzione");
+    updatePlayer();
+    startWatchdog();
+});
+
+audio.addEventListener("timeupdate", () => {
+    if(!audio.paused){
+        markStreamActivity();
+    }
+});
+
+audio.addEventListener("waiting", () => {
+    if(!audio.paused && !userStopped){
+        markStreamTroubled("Buffering...");
+    }
+});
+
+audio.addEventListener("stalled", () => {
+    if(!audio.paused && !userStopped){
+        markStreamTroubled("Connessione lenta...");
+    }
+});
+
+audio.addEventListener("ended", () => {
+    if(!userStopped){
+        markStreamTroubled("Stream terminato");
+        triggerReconnect("Stream terminato");
+    }
+});
+
+audio.addEventListener("error", () => {
+    console.warn("Errore audio:", audio.error);
+    if(!userStopped && currentStation){
+        markStreamTroubled("Connessione persa");
+        triggerReconnect("Errore stream");
+    }
+});
+
+function setupMediaSession(station){
+    if(!("mediaSession" in navigator)) return;
+
+    try{
+        const artwork = [
+            { src: station.favicon || DEFAULT_LOGO, sizes: "512x512", type: "image/png" }
+        ];
+
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: station.name,
+            artist: "Tofu Radio",
+            album: "Radio Browser",
+            artwork: artwork
+        });
+
+        navigator.mediaSession.playbackState = "playing";
+
+        navigator.mediaSession.setActionHandler("play", () => {
+            if(currentStation){
+                userStopped = false;
+                playStation(currentStation);
+            }
+        });
+
+        navigator.mediaSession.setActionHandler("pause", () => { stopAudio(); });
+        navigator.mediaSession.setActionHandler("stop", () => { stopAudio(); });
+    }catch(error){
+        console.warn("Media Session:", error);
+    }
+}
+
+async function sendClick(uuid){
+    if(!uuid) return;
+    const encoded = encodeURIComponent(uuid);
+
+    for(const server of API_SERVERS){
+        try{
+            await fetch(server + "/json/url/" + encoded, {
+                method:"GET",
+                mode:"cors"
+            });
+            return;
+        }catch{}
+    }
+}
+
+function applyLogo(img, station){
+    img.onerror = null;
+
+    if(station.favicon){
+        img.src = station.favicon;
+        img.onerror = () => {
+            img.onerror = null;
+            if(station.homepage){
+                try{
+                    const home = new URL(station.homepage);
+                    img.src = home.origin + "/favicon.ico";
+                    img.onerror = () => {
+                        img.onerror = null;
+                        img.src = DEFAULT_LOGO;
+                    };
+                    return;
+                }catch{}
+            }
+            img.src = DEFAULT_LOGO;
+        };
+        return;
+    }
+
+    if(station.homepage){
+        try{
+            const home = new URL(station.homepage);
+            img.src = home.origin + "/favicon.ico";
+            img.onerror = () => {
+                img.onerror = null;
+                img.src = DEFAULT_LOGO;
+            };
+            return;
+        }catch{}
+    }
+
+    img.src = DEFAULT_LOGO;
+}
+
+function formatCodec(station){
+    return (station.codec || "AUDIO").toUpperCase();
+}
+
+function formatBitrate(station){
+    return Number(station.bitrate) > 0 ? station.bitrate + " kbps" : "Qualità n/d";
+}
+
+function setPlayerStatus(text){
+    playerStatus.textContent = text;
+}
+
+function showPlayerError(text){
+    isPlaying = false;
+    setPlayerStatus(text);
+    updatePlayer();
+}
+
+function escapeHtml(value){
+    return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+searchButton.addEventListener("click", doSearch);
+
+searchInput.addEventListener("keydown", event => {
+    if(event.key === "Enter"){
+        event.preventDefault();
+        doSearch();
+    }
+});
+
+document.getElementById("searchModal").addEventListener("shown.bs.modal", () => {
+    setTimeout(() => searchInput.focus(), 150);
+});
+
+document.addEventListener("visibilitychange", async () => {
+    if(document.visibilityState === "visible"){
+        if(isPlaying){
+            markStreamActivity();
+            await requestWakeLock();
+        }
+    }
+});
+
+favorites = loadFavorites();
+renderFavorites();
+updatePlayer();
+startWatchdog();
+</script>
+</body>
+</html>
+
